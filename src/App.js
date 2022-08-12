@@ -1,24 +1,28 @@
-import logo from './logo.svg';
+import NewRoom from "./components/newRoom";
+import Header from "./components/Header"
 import './App.css';
+import { initializeApp } from "firebase/app";
+import React, { useState } from 'react';
 
 function App() {
+  const firebaseConfig = {
+    storageBucket: '',
+    projectId: "gakugeki-rooms"
+  };
+  const app = initializeApp(firebaseConfig);
+  const [roomSelect, setRoomSelect] = useState(false)
+  function setTrue() {
+    setRoomSelect(true)
+  }
+  function setFalse() {
+    setRoomSelect(false)
+  }
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    {roomSelect && <div className="back" onClick={() => setRoomSelect(false)}></div>}
+    <Header></Header>
+    <NewRoom app={app} roomSelect={roomSelect} function1={setTrue} function2={setFalse}/>
+    </>
   );
 }
 
