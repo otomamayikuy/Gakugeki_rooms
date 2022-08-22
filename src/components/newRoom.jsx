@@ -6,10 +6,10 @@ const NewRoom = (props) => {
     
     const [roomTitle, setRoomTitle] = useState("")
     const [roomMenber, setRoomMenber] = useState(0)
-    const [roomStartHour, setRoomStartHour] = useState(-1)
-    const [roomStartMinite, setRoomStartMinite] = useState(-1)
-    const [roomFinishHour, setRoomFinishHour] = useState(-1)
-    const [roomFinishMinite, setRoomFinishMinite] = useState(-1)
+    const [roomStartHour, setRoomStartHour] = useState(0)
+    const [roomStartMinute, setRoomStartMinute] = useState(0)
+    const [roomFinishHour, setRoomFinishHour] = useState(0)
+    const [roomFinishMinute, setRoomFinishMinute] = useState(0)
     const [room, setRoom] = useState([])
     async function getRoom() {
         const querySnapshot = await getDocs(collection(db, "rooms"));
@@ -35,13 +35,13 @@ const NewRoom = (props) => {
         }else{
             flag=false
         }
-        if(0 <= roomStartHour && 24>=roomStartHour && Number.isInteger(roomStartHour) && 0 <= roomStartMinite && 60>=roomStartMinite && Number.isInteger(roomStartMinite)){
-            console.log(roomStartHour+":"+roomStartMinite)
+        if(0 <= roomStartHour && 24>=roomStartHour && Number.isInteger(roomStartHour) && 0 <= roomStartMinute && 60>=roomStartMinute && Number.isInteger(roomStartMinute)){
+            console.log(roomStartHour+":"+roomStartMinute)
         }else{
             flag=false
         }
-        if(0 <= roomFinishHour && 24>=roomFinishHour && Number.isInteger(roomFinishHour) && 0 <= roomFinishMinite && 60>=roomFinishMinite && Number.isInteger(roomFinishMinite)){
-            console.log(roomFinishHour+":"+roomFinishMinite)
+        if(0 <= roomFinishHour && 24>=roomFinishHour && Number.isInteger(roomFinishHour) && 0 <= roomFinishMinute && 60>=roomFinishMinute && Number.isInteger(roomFinishMinute)){
+            console.log(roomFinishHour+":"+roomFinishMinute)
         }else{
             flag=false
         }
@@ -49,17 +49,25 @@ const NewRoom = (props) => {
             props.function2()
             const DocumentRef = doc(db, "rooms", String(roomNumber+1));
             console.log(DocumentRef)
-            await setDoc(DocumentRef,{title:roomTitle, menber:roomMenber, startHour:roomStartHour, startMinite:roomStartMinite, finishHour:roomFinishHour, finishMinite:roomFinishMinite});
+            await setDoc(DocumentRef,{title:roomTitle, menber:roomMenber, startHour:roomStartHour, startMinute:roomStartMinute, finishHour:roomFinishHour, finishMinute:roomFinishMinute});
             setRoomTitle("");
             setRoomMenber(0);
-            setRoomStartHour(-1);
-            setRoomStartMinite(-1);
-            setRoomFinishHour(-1);
-            setRoomFinishMinite(-1);
+            setRoomStartHour(0);
+            setRoomStartMinute(0);
+            setRoomFinishHour(0);
+            setRoomFinishMinute(0);
             getRoom()
         }
     }
     useEffect(()=>{getRoom()},[])
+    const hour=[]
+    for(let i = 0; i < 24; i++ ){
+        hour.push(i)
+    }
+    const minute=[]
+    for(let i = 0; i < 60; i+=15 ){
+        minute.push(i)
+    }
     return (
         <>
         <h1>ルーム一覧・作成ページ</h1>
@@ -69,10 +77,19 @@ const NewRoom = (props) => {
             <div className="roomSelect">
                 <p>ルームタイトル</p><input value={roomTitle} onChange={(e) => setRoomTitle(e.target.value)}></input><br/>
                 <p>ルーム最低人数</p><input value={roomMenber!==0 ? roomMenber : ""} onChange={(e) => ((Number(e.target.value)||e.target.value==="") && setRoomMenber(e.target.value==="" ? 0 : Number(e.target.value)))}></input><br/>
-                <p>ルーム開始時刻</p><input value={roomStartHour!==-1 ? roomStartHour : ""} onChange={(e) => ((Number(e.target.value)||e.target.value===""||Number(e.target.value)===0) && setRoomStartHour(e.target.value==="" ? -1 : Number(e.target.value)))}></input><p>時</p>
-                <input value={roomStartMinite!==-1 ? roomStartMinite : ""} onChange={(e) => ((Number(e.target.value)||e.target.value===""||Number(e.target.value)===0) && setRoomStartMinite(e.target.value==="" ? -1 : Number(e.target.value)))}></input><p>分</p><br/>
-                <p>ルーム終了時刻</p><input value={roomFinishHour!==-1 ? roomFinishHour : ""} onChange={(e) => ((Number(e.target.value)||Number(e.target.value)===""||e.target.value===0) && setRoomFinishHour(e.target.value==="" ? -1 : Number(e.target.value)))}></input><p>時</p>
-                <input value={roomFinishMinite!==-1 ? roomFinishMinite : ""} onChange={(e) => ((Number(e.target.value)||e.target.value===""||Number(e.target.value)===0) && setRoomFinishMinite(e.target.value==="" ? -1 : Number(e.target.value)))}></input><p>分</p><br/>
+                <p>ルーム開始時刻</p>
+                <select onChange={(e) => setRoomStartHour(Number(e.target.value))}>
+                    {hour.map(arrayItem => <option key={arrayItem} value={arrayItem}>{arrayItem}時</option>)}
+                </select>
+                <select onChange={(e) => setRoomStartMinute(Number(e.target.value))}>
+                    {minute.map(arrayItem => <option key={arrayItem} value={arrayItem}>{arrayItem}分</option>)}
+                </select>
+                <p>ルーム終了時刻</p><select onChange={(e) => setRoomFinishHour(Number(e.target.value))}>
+                    {hour.map(arrayItem => <option key={arrayItem} value={arrayItem}>{arrayItem}時</option>)}
+                </select>
+                <select onChange={(e) => setRoomFinishMinute(Number(e.target.value))}>
+                    {minute.map(arrayItem => <option key={arrayItem} value={arrayItem}>{arrayItem}分</option>)}
+                </select>
                 <button onClick={submit}>決定</button>
             </div>
         </div>}
@@ -92,8 +109,8 @@ const NewRoom = (props) => {
                     <tr key={index}>
                         <td>{item.title}</td>
                         <td>{item.menber}</td>
-                        <td>{item.startHour+":"+(item.startMinite===0 ? "00" : item.startMinite)}</td>
-                        <td>{item.finishHour+":"+(item.finishMinite===0 ? "00" : item.finishMinite)}</td>
+                        <td>{item.startHour+":"+(item.startMinute===0 ? "00" : item.startMinute)}</td>
+                        <td>{item.finishHour+":"+(item.finishMinute===0 ? "00" : item.finishMinute)}</td>
                         <td><button>参加</button></td>
                     </tr>
                 ))}

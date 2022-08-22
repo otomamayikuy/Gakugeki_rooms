@@ -33,8 +33,8 @@ const Header = () => {
             {open &&
             <div id="home_link">
                 <a href="https://gakugeki-web.web.app">動画ページ</a>
-                <a href="https://gakugeki-introduction.web.app">ステージ一覧・予約</a>
-                <a href="https://gakugeki-introduction.web.app">ルーム一覧・ルーム作成</a>
+                <a href="https://gakugeki-stage.web.app">ステージ一覧・予約</a>
+                <a href="https://gakugeki-rooms.web.app">ルーム一覧・ルーム作成</a>
                 <a href="https://gakugeki-introduction.web.app">学檄INFINITE紹介ページ</a>
             </div>}
         </div>
